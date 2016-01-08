@@ -1641,6 +1641,7 @@ filesDisplay(); // TODO: remove after initial unstable release(s)
 	uchar statefile[MAXFNAME];
 	uchar toDel[MAXFNAME];
 	int bDoRMState;
+        int wd;
 	uchar *statefn;
 	DBGPRINTF("imfile: remove listener '%s', wd %d\n",
 	          pLstn->pszFileName, ev->wd);
@@ -1666,6 +1667,8 @@ filesDisplay(); // TODO: remove after initial unstable release(s)
 				"file \"%s\": %s", toDel, errStr);
 		}
 	}
+        wd = wdmapLookupListner(pLstn);
+        wdmapDel(wd);
 }
 
 static void
@@ -1751,7 +1754,6 @@ in_processEvent(struct inotify_event *ev)
 
 	DBGPRINTF("DDDD: imfile: in_processEvent (wd=%d) event Mask='0x%.8X'\n", ev->wd, ev->mask);
 	if			(ev->mask & IN_IGNORED) {
-		wdmapDel(ev->wd);
 		goto done;
 	} else if	(ev->mask & IN_MOVED_FROM) {
 		/* Find wd entry and remove it */
